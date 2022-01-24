@@ -64,34 +64,71 @@ foreach(var Estaciones in stationTypeJson)
                     JObject preDataJson = JObject.Parse(item["data"].ToString());
                     IList<string> keys = preDataJson.Properties().Select(p => p.Name).ToList();
                     JObject dataJson = JObject.Parse(preDataJson[keys[0]].ToString());
+                    var temperatura = "";
+                    var precipitacion = "";
+                    var humedad = "";
+                    var viento = "";
                     switch (dataType)
                     {
                         case "temperature":
                             Console.WriteLine("Temperature");
                             List<string> dataJsonTimeList = dataJson.Properties().Select(p => p.Name).ToList();
                             dataJsonTimeList.Sort();
-                            Console.WriteLine(dataJson[dataJsonTimeList.Last()]);
+                            temperatura = Convert.ToString(dataJson[dataJsonTimeList.Last()]);
+                            Console.WriteLine(temperatura);
                             break;
                         case "precipitation":
                             Console.WriteLine("Precipitation");
                             List<string> dataJsonPreciList = dataJson.Properties().Select(p => p.Name).ToList();
                             dataJsonPreciList.Sort();
-                            Console.WriteLine(dataJson[dataJsonPreciList.Last()]);
+                            precipitacion = Convert.ToString(dataJson[dataJsonPreciList.Last()]);
+                            Console.WriteLine(precipitacion);
                             break;
                         case "humidity":
                             Console.WriteLine("Humidity");
                             List<string> dataJsonHumiList = dataJson.Properties().Select(p => p.Name).ToList();
                             dataJsonHumiList.Sort();
-                            Console.WriteLine(dataJson[dataJsonHumiList.Last()]);
+                            humedad = Convert.ToString(dataJson[dataJsonHumiList.Last()]);
+                            Console.WriteLine(humedad);
                             break;
                         case "mean_speed":
                             Console.WriteLine("Wind speed");
                             List<string> dataJsonWindList = dataJson.Properties().Select(p => p.Name).ToList();
                             dataJsonWindList.Sort();
-                            Console.WriteLine(dataJson[dataJsonWindList.Last()]);
+                            viento = Convert.ToString(dataJson[dataJsonWindList.Last()]);
+                            Console.WriteLine(viento);
                             break;
                     }
-                }catch(Exception e)
+                    /*
+                    using (var db = new TiempoContext())
+                    {
+                        try
+                        {
+                            string id = Estaciones.id + "";
+                            var row = db.InformacionTiempo.Where(a => a.Id == id).Single();
+                            if (row == null)
+                            {
+                                var a1 = new InformacionTiempo { Id = Estaciones.id, Nombre = Estaciones.name, Temperatura = temperatura, Humedad = humedad, Velocidad_Viento = viento, Precipitacion_Acumulada = precipitacion, GpxX = Estaciones.x, GpxY = Estaciones.y }; db.InformacionTiempo.Add(a1);
+                            }else
+                            {
+                                row.Nombre = Estaciones.name;
+                                row.Temperatura = temperatura;
+                                row.Humedad = humedad;
+                                row.Velocidad_Viento = viento;
+                                row.Precipitacion_Acumulada = precipitacion;
+                                row.GpxX = Estaciones.x;
+                                row.GpxY = Estaciones.y;
+                            }
+
+                            db.SaveChanges();
+                        }
+                        catch (Exception e)
+                        {
+                            Console.WriteLine("No se ha podido guardar" );
+                        }
+                    }*/
+                }
+                catch(Exception e)
                 {
                 
                 }
