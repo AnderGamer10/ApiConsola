@@ -26,20 +26,37 @@ var client = new HttpClient { BaseAddress = new Uri(requestUrl) };
 var responseMessage = await client.GetAsync("", HttpCompletionOption.ResponseContentRead);
 var resultData = await responseMessage.Content.ReadAsStringAsync();
 dynamic stationTypeJson = JsonConvert.DeserializeObject(resultData);
-foreach(var items in stationTypeJson)
+foreach(var Estaciones in stationTypeJson)
 {
     try
     {
+        DateTime fecha = DateTime.Now;
+        var dia = "";
+        var mes = "";
+        if (fecha.Day < 10)
+        {
+            dia = 0 + "" + fecha.Day;
+        }else
+        {
+            dia = Convert.ToString(fecha.Day);
+        }
 
-    
-        Console.WriteLine(items.id);
-        var cliente = new HttpClient { BaseAddress = new Uri($"https://www.euskalmet.euskadi.eus/vamet/stations/readings/{items.id}/2022/01/24/readingsData.json")};
+        if (fecha.Month < 10)
+        {
+            mes = 0 + "" + fecha.Month;
+        }else
+        {
+            dia = Convert.ToString(fecha.Month);
+        }
+
+        Console.WriteLine(Estaciones.id);
+        var cliente = new HttpClient { BaseAddress = new Uri($"https://www.euskalmet.euskadi.eus/vamet/stations/readings/{Estaciones.id}/{fecha.Year}/{mes}/{dia}/readingsData.json")};
         var responseMessagee = await cliente.GetAsync("", HttpCompletionOption.ResponseContentRead);
         var resultDatae = await responseMessagee.Content.ReadAsStringAsync();
         dynamic stationReadingsJson = JsonConvert.DeserializeObject(resultDatae);
-        foreach (var items2 in stationReadingsJson)
+        foreach (var DatosEstaciones in stationReadingsJson)
         {
-            foreach(JObject item in items2)
+            foreach (JObject item in DatosEstaciones)
             {
                 try
                 {
@@ -47,12 +64,10 @@ foreach(var items in stationTypeJson)
                     JObject preDataJson = JObject.Parse(item["data"].ToString());
                     IList<string> keys = preDataJson.Properties().Select(p => p.Name).ToList();
                     JObject dataJson = JObject.Parse(preDataJson[keys[0]].ToString());
-                
                     switch (dataType)
                     {
                         case "temperature":
                             Console.WriteLine("Temperature");
-                            //Console.WriteLine(dataJson.ToString());
                             List<string> dataJsonTimeList = dataJson.Properties().Select(p => p.Name).ToList();
                             dataJsonTimeList.Sort();
                             Console.WriteLine(dataJson[dataJsonTimeList.Last()]);
@@ -62,21 +77,18 @@ foreach(var items in stationTypeJson)
                             List<string> dataJsonPreciList = dataJson.Properties().Select(p => p.Name).ToList();
                             dataJsonPreciList.Sort();
                             Console.WriteLine(dataJson[dataJsonPreciList.Last()]);
-                            //Console.WriteLine(dataJson.ToString());
                             break;
                         case "humidity":
                             Console.WriteLine("Humidity");
                             List<string> dataJsonHumiList = dataJson.Properties().Select(p => p.Name).ToList();
                             dataJsonHumiList.Sort();
                             Console.WriteLine(dataJson[dataJsonHumiList.Last()]);
-                            //Console.WriteLine(dataJson.ToString());
                             break;
                         case "mean_speed":
                             Console.WriteLine("Wind speed");
                             List<string> dataJsonWindList = dataJson.Properties().Select(p => p.Name).ToList();
                             dataJsonWindList.Sort();
                             Console.WriteLine(dataJson[dataJsonWindList.Last()]);
-                            //Console.WriteLine(dataJson.ToString());
                             break;
                     }
                 }catch(Exception e)
