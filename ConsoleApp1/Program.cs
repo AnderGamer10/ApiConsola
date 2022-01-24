@@ -28,30 +28,67 @@ var resultData = await responseMessage.Content.ReadAsStringAsync();
 dynamic stationTypeJson = JsonConvert.DeserializeObject(resultData);
 foreach(var items in stationTypeJson)
 {
-    Console.WriteLine(items.id);
-    var cliente = new HttpClient { BaseAddress = new Uri($"https://www.euskalmet.euskadi.eus/vamet/stations/readings/{items.id}/2022/01/22/readingsData.json")};
-    var responseMessagee = await cliente.GetAsync("", HttpCompletionOption.ResponseContentRead);
-    var resultDatae = await responseMessagee.Content.ReadAsStringAsync();
-    dynamic stationReadingsJson = JsonConvert.DeserializeObject(resultDatae);
-    foreach (var items2 in stationReadingsJson)
+    try
     {
-        foreach(JObject item in items2)
+
+    
+        Console.WriteLine(items.id);
+        var cliente = new HttpClient { BaseAddress = new Uri($"https://www.euskalmet.euskadi.eus/vamet/stations/readings/{items.id}/2022/01/24/readingsData.json")};
+        var responseMessagee = await cliente.GetAsync("", HttpCompletionOption.ResponseContentRead);
+        var resultDatae = await responseMessagee.Content.ReadAsStringAsync();
+        dynamic stationReadingsJson = JsonConvert.DeserializeObject(resultDatae);
+        foreach (var items2 in stationReadingsJson)
         {
-            String dataType = item["name"].ToString();
-            JObject preDataJson = JObject.Parse(item["data"].ToString());
-            IList<string> keys = preDataJson.Properties().Select(p => p.Name).ToList();
-            JObject dataJson = JObject.Parse(preDataJson[keys[0]].ToString());
-            switch (dataType)
+            foreach(JObject item in items2)
             {
-                case "temperature":
-                    Console.WriteLine(dataJson.ToString());
-                    List<string> dataJsonTimeList = dataJson.Properties().Select(p => p.Name).ToList();
-                    dataJsonTimeList.Sort();
-                    //Console.WriteLine(dataJsonTimeList.Last());
-                    break;
+                try
+                {
+                    String dataType = item["name"].ToString();
+                    JObject preDataJson = JObject.Parse(item["data"].ToString());
+                    IList<string> keys = preDataJson.Properties().Select(p => p.Name).ToList();
+                    JObject dataJson = JObject.Parse(preDataJson[keys[0]].ToString());
+                
+                    switch (dataType)
+                    {
+                        case "temperature":
+                            Console.WriteLine("Temperature");
+                            //Console.WriteLine(dataJson.ToString());
+                            List<string> dataJsonTimeList = dataJson.Properties().Select(p => p.Name).ToList();
+                            dataJsonTimeList.Sort();
+                            Console.WriteLine(dataJson[dataJsonTimeList.Last()]);
+                            break;
+                        case "precipitation":
+                            Console.WriteLine("Precipitation");
+                            List<string> dataJsonPreciList = dataJson.Properties().Select(p => p.Name).ToList();
+                            dataJsonPreciList.Sort();
+                            Console.WriteLine(dataJson[dataJsonPreciList.Last()]);
+                            //Console.WriteLine(dataJson.ToString());
+                            break;
+                        case "humidity":
+                            Console.WriteLine("Humidity");
+                            List<string> dataJsonHumiList = dataJson.Properties().Select(p => p.Name).ToList();
+                            dataJsonHumiList.Sort();
+                            Console.WriteLine(dataJson[dataJsonHumiList.Last()]);
+                            //Console.WriteLine(dataJson.ToString());
+                            break;
+                        case "mean_speed":
+                            Console.WriteLine("Wind speed");
+                            List<string> dataJsonWindList = dataJson.Properties().Select(p => p.Name).ToList();
+                            dataJsonWindList.Sort();
+                            Console.WriteLine(dataJson[dataJsonWindList.Last()]);
+                            //Console.WriteLine(dataJson.ToString());
+                            break;
+                    }
+                }catch(Exception e)
+                {
+                
+                }
             }
-        }
         
+        }
+    }catch(Exception e)
+    {
+
     }
 }
 
