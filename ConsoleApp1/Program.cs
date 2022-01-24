@@ -99,7 +99,7 @@ foreach(var Estaciones in stationTypeJson)
                             Console.WriteLine(viento);
                             break;
                     }
-                    /*
+                    /* ------------------------------ No se guarda*/
                     using (var db = new TiempoContext())
                     {
                         try
@@ -126,7 +126,7 @@ foreach(var Estaciones in stationTypeJson)
                         {
                             Console.WriteLine("No se ha podido guardar" );
                         }
-                    }*/
+                    }
                 }
                 catch(Exception e)
                 {
