@@ -49,13 +49,19 @@ foreach(var Estaciones in stationTypeJson)
             dia = Convert.ToString(fecha.Month);
         }
 
-        Console.WriteLine(Estaciones.id);
+        //Console.WriteLine(Estaciones.id);
         var cliente = new HttpClient { BaseAddress = new Uri($"https://www.euskalmet.euskadi.eus/vamet/stations/readings/{Estaciones.id}/{fecha.Year}/{mes}/{dia}/readingsData.json")};
         var responseMessagee = await cliente.GetAsync("", HttpCompletionOption.ResponseContentRead);
         var resultDatae = await responseMessagee.Content.ReadAsStringAsync();
         dynamic stationReadingsJson = JsonConvert.DeserializeObject(resultDatae);
+        var temperatura = "No hay datos";
+        var precipitacion = "No hay datos";
+        var humedad = "No hay datos";
+        var viento = "No hay datos";
+        
         foreach (var DatosEstaciones in stationReadingsJson)
         {
+            
             foreach (JObject item in DatosEstaciones)
             {
                 try
@@ -64,78 +70,100 @@ foreach(var Estaciones in stationTypeJson)
                     JObject preDataJson = JObject.Parse(item["data"].ToString());
                     IList<string> keys = preDataJson.Properties().Select(p => p.Name).ToList();
                     JObject dataJson = JObject.Parse(preDataJson[keys[0]].ToString());
-                    var temperatura = "";
-                    var precipitacion = "";
-                    var humedad = "";
-                    var viento = "";
                     switch (dataType)
                     {
                         case "temperature":
-                            Console.WriteLine("Temperature");
+                            //Console.WriteLine("Temperature");
                             List<string> dataJsonTimeList = dataJson.Properties().Select(p => p.Name).ToList();
                             dataJsonTimeList.Sort();
                             temperatura = Convert.ToString(dataJson[dataJsonTimeList.Last()]);
-                            Console.WriteLine(temperatura);
+                            //Console.WriteLine(temperatura);
                             break;
                         case "precipitation":
-                            Console.WriteLine("Precipitation");
+                            //Console.WriteLine("Precipitation");
                             List<string> dataJsonPreciList = dataJson.Properties().Select(p => p.Name).ToList();
                             dataJsonPreciList.Sort();
                             precipitacion = Convert.ToString(dataJson[dataJsonPreciList.Last()]);
-                            Console.WriteLine(precipitacion);
+                            //Console.WriteLine(precipitacion);
                             break;
                         case "humidity":
-                            Console.WriteLine("Humidity");
+                            //Console.WriteLine("Humidity");
                             List<string> dataJsonHumiList = dataJson.Properties().Select(p => p.Name).ToList();
                             dataJsonHumiList.Sort();
                             humedad = Convert.ToString(dataJson[dataJsonHumiList.Last()]);
-                            Console.WriteLine(humedad);
+                            //Console.WriteLine(humedad);
                             break;
                         case "mean_speed":
-                            Console.WriteLine("Wind speed");
+                            //Console.WriteLine("Wind speed");
                             List<string> dataJsonWindList = dataJson.Properties().Select(p => p.Name).ToList();
                             dataJsonWindList.Sort();
                             viento = Convert.ToString(dataJson[dataJsonWindList.Last()]);
-                            Console.WriteLine(viento);
+                            //Console.WriteLine(viento);
                             break;
-                    }
-                    /* ------------------------------ No se guarda*/
-                    using (var db = new TiempoContext())
-                    {
-                        try
-                        {
-                            string id = Estaciones.id + "";
-                            var row = db.InformacionTiempo.Where(a => a.Id == id).Single();
-                            if (row == null)
-                            {
-                                var a1 = new InformacionTiempo { Id = Estaciones.id, Nombre = Estaciones.name, Temperatura = temperatura, Humedad = humedad, Velocidad_Viento = viento, Precipitacion_Acumulada = precipitacion, GpxX = Estaciones.x, GpxY = Estaciones.y }; db.InformacionTiempo.Add(a1);
-                            }else
-                            {
-                                row.Nombre = Estaciones.name;
-                                row.Temperatura = temperatura;
-                                row.Humedad = humedad;
-                                row.Velocidad_Viento = viento;
-                                row.Precipitacion_Acumulada = precipitacion;
-                                row.GpxX = Estaciones.x;
-                                row.GpxY = Estaciones.y;
-                            }
-
-                            db.SaveChanges();
-                        }
-                        catch (Exception e)
-                        {
-                            Console.WriteLine("No se ha podido guardar" );
-                        }
-                    }
+                    } 
                 }
                 catch(Exception e)
                 {
-                
+                    Console.WriteLine("No va");
                 }
             }
-        
+
+            /* ------------------------------ No se guarda*/
+            /*if (temperatura == null && humedad == null && precipitacion == null && viento == null)
+            {
+                Console.WriteLine("No hay datos");
+            }
+            else
+            {
+                
+            }*/
+            /*--------------------------------------*/
         }
-    }catch(Exception e)
+        using (var db = new TiempoContext())
+        {
+            try
+            {
+                string id = Estaciones.id;
+                //Metiendo nuevos datos
+                /*if (temperatura == "No hay datos" && humedad == "No hay datos" && precipitacion == "No hay datos" && viento == "No hay datos")
+                {
+                    Console.WriteLine("No hay datos");
+                }
+                else
+                {
+                    Console.WriteLine("Metiendo los datos");
+                    var ao1 = new InformacionTiempo
+                    {
+                        Id = Estaciones.id,
+                        Nombre = Estaciones.name,
+                        Temperatura = temperatura,
+                        Humedad = humedad,
+                        Velocidad_Viento = viento,
+                        Precipitacion_Acumulada = precipitacion,
+                        GpxX = Estaciones.x,
+                        GpxY = Estaciones.y
+                    };
+                    db.InformacionTiempo.Add(ao1);
+                };*/
+                var row = db.InformacionTiempo.Where(a => a.Id == id).Single();
+                /*Zona de actualizacion de datos*/
+                Console.WriteLine("Actualizando los datos");
+                row.Temperatura = temperatura;
+                row.Humedad = humedad;
+                row.Velocidad_Viento = viento;
+                row.Precipitacion_Acumulada = precipitacion;
+
+
+                db.SaveChanges();
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine("No se ha podido guardar" + e);
+            }
+        }
+
+    }
+    catch (Exception e)
     {
 
     }
