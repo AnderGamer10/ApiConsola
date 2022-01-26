@@ -16,8 +16,8 @@ public class TiempoContext : DbContext
     public string connString { get; private set; }
     public TiempoContext()
     {
-        //connString = $"Server=185.60.40.210\\SQLEXPRESS,58015;Database=DB11Ander;User Id=sa;Password=Pa88word;";
-        connString = $"Server=(localdb)\\mssqllocaldb;Database=BD11AnderPrueba;Trusted_Connection=True;MultipleActiveResultSets=true";
+        connString = $"Server=185.60.40.210\\SQLEXPRESS,58015;Database=DB11Ander;User Id=sa;Password=Pa88word;";
+        //connString = $"Server=(localdb)\\mssqllocaldb;Database=BD11AnderPrueba;Trusted_Connection=True;MultipleActiveResultSets=true";
     }
     protected override void OnConfiguring(DbContextOptionsBuilder options) => options.UseSqlServer(connString);
 }

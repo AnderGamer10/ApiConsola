@@ -107,17 +107,6 @@ foreach(var Estaciones in stationTypeJson)
                     Console.WriteLine("No va");
                 }
             }
-
-            /* ------------------------------ No se guarda*/
-            /*if (temperatura == null && humedad == null && precipitacion == null && viento == null)
-            {
-                Console.WriteLine("No hay datos");
-            }
-            else
-            {
-                
-            }*/
-            /*--------------------------------------*/
         }
         using (var db = new TiempoContext())
         {
@@ -125,13 +114,14 @@ foreach(var Estaciones in stationTypeJson)
             {
                 string id = Estaciones.id;
                 //Metiendo nuevos datos
-                /*if (temperatura == "No hay datos" && humedad == "No hay datos" && precipitacion == "No hay datos" && viento == "No hay datos")
+                if (temperatura == "No hay datos" && humedad == "No hay datos" && precipitacion == "No hay datos" && viento == "No hay datos")
                 {
                     Console.WriteLine("No hay datos");
                 }
                 else
                 {
-                    Console.WriteLine("Metiendo los datos");
+                    
+                    /*Console.WriteLine("Metiendo los datos");
                     var ao1 = new InformacionTiempo
                     {
                         Id = Estaciones.id,
@@ -143,17 +133,15 @@ foreach(var Estaciones in stationTypeJson)
                         GpxX = Estaciones.x,
                         GpxY = Estaciones.y
                     };
-                    db.InformacionTiempo.Add(ao1);
-                };*/
-                var row = db.InformacionTiempo.Where(a => a.Id == id).Single();
-                /*Zona de actualizacion de datos*/
-                Console.WriteLine("Actualizando los datos");
-                row.Temperatura = temperatura;
-                row.Humedad = humedad;
-                row.Velocidad_Viento = viento;
-                row.Precipitacion_Acumulada = precipitacion;
-
-
+                    db.InformacionTiempo.Add(ao1);*/
+                    /*Zona de actualizacion de datos*/
+                    var row = db.InformacionTiempo.Where(a => a.Id == id).Single();
+                    Console.WriteLine("Actualizando los datos");
+                    row.Temperatura = temperatura;
+                    row.Humedad = humedad;
+                    row.Velocidad_Viento = viento;
+                    row.Precipitacion_Acumulada = precipitacion;
+                };
                 db.SaveChanges();
             }
             catch (Exception e)
