@@ -13,17 +13,11 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
-
-//Obtenemos las estaciones
-//https://www.euskalmet.euskadi.eus/vamet/stations/stationList/stationList.json
-//Obtenemos los datos de las estaciones
-//https://www.euskalmet.euskadi.eus/vamet/stations/readings/C00B/2022/01/22/readingsData.json
-
 class Program
 {
     static async Task Main(string[] args)
     {
-        TimeSpan interval = new TimeSpan(0, 0, 30);
+        TimeSpan interval = new TimeSpan(0, 0, 300);
         while (true)
         {
             await ActualizandoDatos();
@@ -33,9 +27,30 @@ class Program
     static async Task ActualizandoDatos()
     {
         Console.WriteLine("Actualizando");
-        var requestUrl = $"https://www.euskalmet.euskadi.eus/vamet/stations/stationList/stationList.json";
 
-        Debug.WriteLine(requestUrl);
+        DateTime fecha = DateTime.Now;
+        var dia = "";
+        var mes = "";
+        if (fecha.Day < 10)
+        {
+            dia = 0 + "" + fecha.Day;
+        }
+        else
+        {
+            dia = Convert.ToString(fecha.Day);
+        }
+
+        if (fecha.Month < 10)
+        {
+            mes = 0 + "" + fecha.Month;
+        }
+        else
+        {
+            dia = Convert.ToString(fecha.Month);
+        }
+
+        Console.WriteLine("****************************" + fecha.TimeOfDay + "****************************");
+        var requestUrl = $"https://www.euskalmet.euskadi.eus/vamet/stations/stationList/stationList.json";
         var client = new HttpClient { BaseAddress = new Uri(requestUrl) };
         var responseMessage = await client.GetAsync("", HttpCompletionOption.ResponseContentRead);
         var resultData = await responseMessage.Content.ReadAsStringAsync();
@@ -44,28 +59,6 @@ class Program
         {
             try
             {
-                DateTime fecha = DateTime.Now;
-                var dia = "";
-                var mes = "";
-                if (fecha.Day < 10)
-                {
-                    dia = 0 + "" + fecha.Day;
-                }
-                else
-                {
-                    dia = Convert.ToString(fecha.Day);
-                }
-
-                if (fecha.Month < 10)
-                {
-                    mes = 0 + "" + fecha.Month;
-                }
-                else
-                {
-                    dia = Convert.ToString(fecha.Month);
-                }
-
-                //Console.WriteLine(Estaciones.id);
                 var cliente = new HttpClient { BaseAddress = new Uri($"https://www.euskalmet.euskadi.eus/vamet/stations/readings/{Estaciones.id}/{fecha.Year}/{mes}/{dia}/readingsData.json") };
                 var responseMessagee = await cliente.GetAsync("", HttpCompletionOption.ResponseContentRead);
                 var resultDatae = await responseMessagee.Content.ReadAsStringAsync();
