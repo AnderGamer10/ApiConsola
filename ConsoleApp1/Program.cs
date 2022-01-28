@@ -120,31 +120,40 @@ class Program
                 {
                     try
                     {
-                        if (temperatura != "No hay datos" && humedad != "No hay datos" && precipitacion != "No hay datos" && viento != "No hay datos")
+                        if (temperatura == "No hay datos" && humedad == "No hay datos" && precipitacion == "No hay datos" && viento == "No hay datos")
                         {
-                            /*Console.WriteLine("Metiendo datos nuevos");
-                            var ao1 = new InformacionTiempo
-                            {
-                                Id = Estaciones.id,
-                                Nombre = Estaciones.name,
-                                Municipio = Estaciones.municipality,
-                                Temperatura = temperatura,
-                                Humedad = humedad,
-                                Velocidad_Viento = viento,
-                                Precipitacion_Acumulada = precipitacion,
-                                GpxX = Estaciones.x,
-                                GpxY = Estaciones.y
-                            };
-                            db.InformacionTiempo.Add(ao1);*/
-
-                            /*Zona de actualizacion de datos*/
+                            Console.WriteLine("Sin datos");
+                        }
+                        else
+                        {
+                            //Zona de actualizacion de datos
                             string id = Estaciones.id;
-                            var infoNueva = db.InformacionTiempo.Where(a => a.Id == id).Single();
-                            Console.WriteLine(Estaciones.id + ": Actualizando los datos");
-                            infoNueva.Temperatura = temperatura;
-                            infoNueva.Humedad = humedad;
-                            infoNueva.Velocidad_Viento = viento;
-                            infoNueva.Precipitacion_Acumulada = precipitacion;
+                            try
+                            {
+                                var infoNueva = db.InformacionTiempo.Where(a => a.Id == id).Single();
+                                Console.WriteLine(Estaciones.id + ": Actualizando los datos");
+                                infoNueva.Temperatura = temperatura;
+                                infoNueva.Humedad = humedad;
+                                infoNueva.Velocidad_Viento = viento;
+                                infoNueva.Precipitacion_Acumulada = precipitacion;
+                            }
+                            catch (Exception e)
+                            {
+                                Console.WriteLine("Metiendo datos nuevos");
+                                var ao1 = new InformacionTiempo
+                                {
+                                    Id = Estaciones.id,
+                                    Nombre = Estaciones.name,
+                                    Municipio = Estaciones.municipality,
+                                    Temperatura = temperatura,
+                                    Humedad = humedad,
+                                    Velocidad_Viento = viento,
+                                    Precipitacion_Acumulada = precipitacion,
+                                    GpxX = Estaciones.x,
+                                    GpxY = Estaciones.y
+                                };
+                                db.InformacionTiempo.Add(ao1);
+                            }
                         };
                         db.SaveChanges();
                     }
