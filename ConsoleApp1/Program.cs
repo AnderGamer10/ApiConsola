@@ -127,8 +127,8 @@ class Program
                                 Console.WriteLine(Estaciones.id + ": Actualizando los datos");
                                 infoNueva.Temperatura = temperatura;
                                 infoNueva.Humedad = humedad;
-                                infoNueva.Velocidad_Viento = viento;
-                                infoNueva.Precipitacion_Acumulada = precipitacion;
+                                infoNueva.VelocidadViento = viento;
+                                infoNueva.PrecipitacionAcumulada = precipitacion;
                             }
                             catch (Exception e)
                             {
@@ -140,8 +140,8 @@ class Program
                                     Municipio = Estaciones.municipality,
                                     Temperatura = temperatura,
                                     Humedad = humedad,
-                                    Velocidad_Viento = viento,
-                                    Precipitacion_Acumulada = precipitacion,
+                                    VelocidadViento = viento,
+                                    PrecipitacionAcumulada = precipitacion,
                                     GpxX = Estaciones.x,
                                     GpxY = Estaciones.y
                                 };
