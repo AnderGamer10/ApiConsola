@@ -12,6 +12,7 @@ public class InformacionTiempo
     [Key, DatabaseGenerated(DatabaseGeneratedOption.None)]
     public string Id { get; set; }
     public string Nombre { get; set; }
+    public string Municipio { get; set; }
     public string Temperatura { get; set; }
     public string Humedad { get; set; }
     public string Velocidad_Viento { get; set; }

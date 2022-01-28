@@ -127,6 +127,7 @@ class Program
                             {
                                 Id = Estaciones.id,
                                 Nombre = Estaciones.name,
+                                Municipio = Estaciones.municipality,
                                 Temperatura = temperatura,
                                 Humedad = humedad,
                                 Velocidad_Viento = viento,
