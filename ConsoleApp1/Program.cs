@@ -129,7 +129,6 @@ class Program
                                 infoNueva.Humedad = humedad;
                                 infoNueva.VelocidadViento = viento;
                                 infoNueva.PrecipitacionAcumulada = precipitacion;
-                                infoNueva.TipoEstacion = Estaciones.stationType;
                             }
                             catch (Exception e)
                             {
@@ -145,8 +144,9 @@ class Program
                                     PrecipitacionAcumulada = precipitacion,
                                     GpxX = Estaciones.x,
                                     GpxY = Estaciones.y,
-                                    TipoEstacion = Estaciones.stationType
-                                };
+                                    TipoEstacion = Estaciones.stationType,
+                                    Provincia = Estaciones.province
+                            };
                                 db.InformacionTiempo.Add(ao1);
                             }
                         };
@@ -157,7 +157,6 @@ class Program
                         Console.WriteLine("No se ha podido guardar" + e);
                     }
                 }
-
             }
             catch (Exception e)
             {
