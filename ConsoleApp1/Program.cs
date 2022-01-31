@@ -26,32 +26,31 @@ class Program
     }
     static async Task ActualizandoDatos()
     {
-        Console.WriteLine("Actualizando");
+        Console.WriteLine("Actualizando/Insertando datos");
 
         DateTime fecha = DateTime.Now;
-        var dia = "";
-        var mes = "";
+        var sDia = "";
+        var sMes = "";
         if (fecha.Day < 10)
         {
-            dia = 0 + "" + fecha.Day;
+            sDia = 0 + "" + fecha.Day;
         }
         else
         {
-            dia = Convert.ToString(fecha.Day);
+            sDia = Convert.ToString(fecha.Day);
         }
 
         if (fecha.Month < 10)
         {
-            mes = 0 + "" + fecha.Month;
+            sMes = 0 + "" + fecha.Month;
         }
         else
         {
-            dia = Convert.ToString(fecha.Month);
+            sMes = Convert.ToString(fecha.Month);
         }
 
         Console.WriteLine("****************************" + fecha.TimeOfDay + "****************************");
-        var requestUrl = $"https://www.euskalmet.euskadi.eus/vamet/stations/stationList/stationList.json";
-        var client = new HttpClient { BaseAddress = new Uri(requestUrl) };
+        var client = new HttpClient { BaseAddress = new Uri($"https://www.euskalmet.euskadi.eus/vamet/stations/stationList/stationList.json") };
         var responseMessage = await client.GetAsync("", HttpCompletionOption.ResponseContentRead);
         var resultData = await responseMessage.Content.ReadAsStringAsync();
         dynamic stationTypeJson = JsonConvert.DeserializeObject(resultData);
@@ -59,14 +58,15 @@ class Program
         {
             try
             {
-                var cliente = new HttpClient { BaseAddress = new Uri($"https://www.euskalmet.euskadi.eus/vamet/stations/readings/{Estaciones.id}/{fecha.Year}/{mes}/{dia}/readingsData.json") };
+                var cliente = new HttpClient { BaseAddress = new Uri($"https://www.euskalmet.euskadi.eus/vamet/stations/readings/{Estaciones.id}/{fecha.Year}/{sMes}/{sDia}/readingsData.json") };
                 var responseMessagee = await cliente.GetAsync("", HttpCompletionOption.ResponseContentRead);
                 var resultDatae = await responseMessagee.Content.ReadAsStringAsync();
                 dynamic stationReadingsJson = JsonConvert.DeserializeObject(resultDatae);
-                var temperatura = "No hay datos";
-                var precipitacion = "No hay datos";
-                var humedad = "No hay datos";
-                var viento = "No hay datos";
+
+                var sTemperatura = "No hay datos";
+                var sPrecipitacion = "No hay datos";
+                var sHumedad = "No hay datos";
+                var sViento = "No hay datos";
 
                 foreach (var DatosEstaciones in stationReadingsJson)
                 {
@@ -84,22 +84,22 @@ class Program
                                 case "temperature":
                                     List<string> dataJsonTimeList = dataJson.Properties().Select(p => p.Name).ToList();
                                     dataJsonTimeList.Sort();
-                                    temperatura = Convert.ToString(dataJson[dataJsonTimeList.Last()]);
+                                    sTemperatura = Convert.ToString(dataJson[dataJsonTimeList.Last()]);
                                     break;
                                 case "precipitation":
                                     List<string> dataJsonPreciList = dataJson.Properties().Select(p => p.Name).ToList();
                                     dataJsonPreciList.Sort();
-                                    precipitacion = Convert.ToString(dataJson[dataJsonPreciList.Last()]);
+                                    sPrecipitacion = Convert.ToString(dataJson[dataJsonPreciList.Last()]);
                                     break;
                                 case "humidity":
                                     List<string> dataJsonHumiList = dataJson.Properties().Select(p => p.Name).ToList();
                                     dataJsonHumiList.Sort();
-                                    humedad = Convert.ToString(dataJson[dataJsonHumiList.Last()]);
+                                    sHumedad = Convert.ToString(dataJson[dataJsonHumiList.Last()]);
                                     break;
                                 case "mean_speed":
                                     List<string> dataJsonWindList = dataJson.Properties().Select(p => p.Name).ToList();
                                     dataJsonWindList.Sort();
-                                    viento = Convert.ToString(dataJson[dataJsonWindList.Last()]);
+                                    sViento = Convert.ToString(dataJson[dataJsonWindList.Last()]);
                                     break;
                             }
                         }
@@ -113,7 +113,7 @@ class Program
                 {
                     try
                     {
-                        if (temperatura == "No hay datos" && humedad == "No hay datos" && precipitacion == "No hay datos" && viento == "No hay datos")
+                        if (sTemperatura == "No hay datos" && sHumedad == "No hay datos" && sPrecipitacion == "No hay datos" && sViento == "No hay datos")
                         {
                             Console.WriteLine("Sin datos");
                         }
@@ -125,10 +125,10 @@ class Program
                             {
                                 var infoNueva = db.InformacionTiempo.Where(a => a.Id == id).Single();
                                 Console.WriteLine(Estaciones.id + ": Actualizando los datos");
-                                infoNueva.Temperatura = temperatura;
-                                infoNueva.Humedad = humedad;
-                                infoNueva.VelocidadViento = viento;
-                                infoNueva.PrecipitacionAcumulada = precipitacion;
+                                infoNueva.Temperatura = sTemperatura;
+                                infoNueva.Humedad = sHumedad;
+                                infoNueva.VelocidadViento = sViento;
+                                infoNueva.PrecipitacionAcumulada = sPrecipitacion;
                             }
                             catch (Exception e)
                             {
@@ -138,10 +138,10 @@ class Program
                                     Id = Estaciones.id,
                                     Nombre = Estaciones.name,
                                     Municipio = Estaciones.municipality,
-                                    Temperatura = temperatura,
-                                    Humedad = humedad,
-                                    VelocidadViento = viento,
-                                    PrecipitacionAcumulada = precipitacion,
+                                    Temperatura = sTemperatura,
+                                    Humedad = sHumedad,
+                                    VelocidadViento = sViento,
+                                    PrecipitacionAcumulada = sPrecipitacion,
                                     GpxX = Estaciones.x,
                                     GpxY = Estaciones.y,
                                     TipoEstacion = Estaciones.stationType,
